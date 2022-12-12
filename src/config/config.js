@@ -1,10 +1,11 @@
-const dotenv = require('dotenv');
+const path = require('path');
 
 /**
  * Load environment variables from .env file, where csv path and database
  * environment variables are configured.
  */
-dotenv.load({ path: '../.env.example' });
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+
 
 const config = {
   database: {
@@ -19,7 +20,10 @@ const config = {
   },
   concurrencyLimit: 2,
   csv: {
-    path: process.env.CSV_PATH
+    path: process.env.CSV_PATH || './sample.csv'
+  },
+  express: {
+    port: process.env.EXPRESS_PORT
   }
 };
 

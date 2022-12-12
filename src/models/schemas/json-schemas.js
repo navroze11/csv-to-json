@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const personSchema = Joi.object({
+const userSchema = Joi.object({
   name: Joi.object({
     firstName: Joi.object().required(),
     lastName: Joi.object().required()
@@ -9,5 +9,5 @@ const personSchema = Joi.object({
 }).unknown(true);
 
 module.exports = {
-  personSchema
+  userSchema
 };

@@ -29,8 +29,8 @@ class Db {
       client.query(query, values);
       client.release();
     } catch (err) {
-      console.log(err.stack);
       client.release();
+      throw err;
     }
   }
 

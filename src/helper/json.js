@@ -1,9 +1,9 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 
-const { personSchema } = require('../models/schemas/json-schemas');
+const { userSchema } = require('../models/schemas/json-schemas');
 
-const filterList = {
+const allowedJsonProperties = {
   name: true,
   age: true,
   address: true,
@@ -27,10 +27,10 @@ class Json {
    * @param {*} data a single json record retrieved from parsing the csv
    * @param {*} jsonSchema The created jsonSchema.
    * @param {*} index used for terminating the recursion
-   * @returns
+   * @returns void
    */
   traverseAndAssign(property, properties, data, jsonSchema, index) {
-    // Last property in the nested properties. Assign value from data
+    // Last property in properties array to terminate condition. Assign value from data
     if (index === properties.length - 1) {
       jsonSchema[properties[index]] = data[property];
       return;
@@ -40,8 +40,8 @@ class Json {
   }
 
   /**
-   * @param {Array} properties individual properties example name.first, name.lastName
-   * split into name, firstName, lastName
+   * @param {Array} properties individual properties example name.firstName
+   * split into [name, firstName]
    * @param {Object} nestedPropertyObject traverse the nestedPropertyObject using recursion
    * @returns void
    */
@@ -62,7 +62,7 @@ class Json {
   /**
    * It will create a jsonStructure defined in the test for populating information from csv.
    * The structure can be found in the test file for better clarity.
-   * @param {*} headers from csv
+   * @param {Array} headers from csv
    * @returns predefined json with empty objects
    */
   createJsonSchema(headers) {
@@ -105,7 +105,7 @@ class Json {
     jsonRecords.map((record) => {
       record.additional_info = {};
       Object.keys(record).forEach((key) => {
-        if (!(key in filterList)) {
+        if (!(key in allowedJsonProperties)) {
           record.additional_info[key] = record[key];
           delete record[key];
         }
@@ -116,33 +116,36 @@ class Json {
 
   /**
    * Following actions will take place
-   * Create Json Structure
-   * Validate if the structure contains the mandatory fields such as name and age.
+   * Create Json Structure(Schema)
+   * Validate if the structure contains the mandatory fields such as name and age using joi.
    * Populate the Json Structure with user data.
-   * Create a new object called additional_info
+   * Create a new object called additional_info.
    * Pass the created json objects to the next chain for processing and storing the data.
    * @param {string} filePath containing the path to the csv.
    */
-  exec(filePath) {
-    try {
-      fs.createReadStream(filePath)
-        .pipe(csv())
-        .on('headers', (headers) => {
-          this.jsonSchema = this.createJsonSchema(headers);
-          const { error } = personSchema.validate(this.jsonSchema);
-          if (error) throw Error(error.message);
-        })
-        .on('data', (data) => {
-          const record = JSON.parse(JSON.stringify(this.assignValues(data, this.jsonSchema)));
-          this.jsonRecords.push(record);
-        })
-        .on('end', () => {
-          this.createAdditionalInfo(this.jsonRecords);
-          this.next.exec(this.jsonRecords);
-        });
-    } catch (error) {
-      throw error;
-    }
+  async exec(filePath) {
+    return new Promise((resolve, reject) => {
+      try {
+        fs.createReadStream(filePath)
+          .pipe(csv())
+          .on('headers', (headers) => {
+            this.jsonSchema = this.createJsonSchema(headers);
+            const { error } = userSchema.validate(this.jsonSchema);
+            if (error) throw Error(error.message);
+          })
+          .on('data', (data) => {
+            const record = JSON.parse(JSON.stringify(this.assignValues(data, this.jsonSchema)));
+            this.jsonRecords.push(record);
+          })
+          .on('end', async () => {
+            this.createAdditionalInfo(this.jsonRecords);
+            const response = await this.next.exec(this.jsonRecords, false);
+            resolve(response);
+          });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
 

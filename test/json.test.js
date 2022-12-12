@@ -39,6 +39,7 @@ describe('Json Structure', async () => {
   it('create Json Structure with information', async () => {
     const json = new Json();
     json.createAdditionalInfo(jsonSchemaData.jsonRecordWithPhone.input);
-    assert.deepEqual(jsonSchemaData.jsonRecordWithPhone.input[0], jsonSchemaData.jsonRecordWithPhone.expectedOutput);
+    assert.deepEqual(jsonSchemaData.jsonRecordWithPhone.input[0],
+      jsonSchemaData.jsonRecordWithPhone.expectedOutput);
   });
 });

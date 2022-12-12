@@ -1,7 +1,7 @@
 const jsonSchemaData = {
-  headersWithTwoFields:{
+  headersWithTwoFields: {
     input: ['name.firstName', 'name.lastName', 'age'],
-    expectedOutput : {
+    expectedOutput: {
       name: {
         firstName: {},
         lastName: {}
@@ -9,9 +9,9 @@ const jsonSchemaData = {
       age: {}
     }
   },
-  headersWithGender : {
+  headersWithGender: {
     input: ['name.firstName', 'name.lastName', 'age', 'gender'],
-    expectedOutput : {
+    expectedOutput: {
       name: {
         firstName: {},
         lastName: {}
@@ -20,10 +20,10 @@ const jsonSchemaData = {
       gender: {}
     }
   },
-  headersWithTwoNestedFields : {
+  headersWithTwoNestedFields: {
     input: ['name.firstName', 'name.lastName', 'age', 'gender', 'contact.landline',
-    'contact.mobile'],
-    expectedOutput : {
+      'contact.mobile'],
+    expectedOutput: {
       name: {
         firstName: {},
         lastName: {}
@@ -36,7 +36,7 @@ const jsonSchemaData = {
       gender: {}
     }
   },
-  jsonRecordWithPhone:{
+  jsonRecordWithPhone: {
     input: [{
       name: { firstName: 'Claire', lastName: 'Raider' },
       age: '18',
@@ -61,18 +61,18 @@ const jsonSchemaData = {
       additional_info: { gender: 'Female', phone: { landline: '12345', mobile: '6789' } }
     }
   },
-  oneNestedProperty:{
-    input: ["name", "firstName"],
+  oneNestedProperty: {
+    input: ['name', 'firstName'],
     expectedOutput: {
-      name:{
+      name: {
         firstName: {}
       }
     }
   },
   twoNestedProperty: {
-    input: ["name", "firstName", "initial"],
+    input: ['name', 'firstName', 'initial'],
     expectedOutput: {
-      name:{
+      name: {
         firstName: {
           initial: {}
         }

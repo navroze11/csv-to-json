@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker');
+const { Process } = require('./src/helper/Process');
 
 function randomBetween(min, max) {
   return ~~(Math.random() * (max - min)) + min;
@@ -11,36 +12,28 @@ function createRandomUser() {
       lastName: faker.name.lastName()
     },
     age: randomBetween(15, 90),
-    address:{
+    address: {
       streetAddress: faker.address.streetAddress(),
       streetNumber: faker.address.buildingNumber()
     },
-    additional_info:{
+    additional_info: {
       gender: 'male',
-      contact:{
-        landLine: faker.phone.number(),
-        mobile: faker.phone.number()
+      contact: {
+        landLine: 123,
+        mobile: 456
       }
     }
   };
 }
 
-function seedUsers(userCount) {
+async function seedUsers(userCount) {
   const users = [];
   Array.from({ length: userCount }).forEach(() => {
     users.push(createRandomUser());
   });
-  return users;
+  // console.log(JSON.stringify(users, null, 3));
+  new Process().exec(users, true);
+  console.log('Connection will automatically terminate after sometime');
 }
 
-seedUsers();
-module.exports = {
-  seedUsers
-}
-
-
-
-
-
-
-
+seedUsers(100);
