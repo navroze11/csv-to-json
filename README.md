@@ -12,7 +12,7 @@ Table of Contents
 
 Swagger
 -------------
-The swagger UI for the api can be found [here](#localhost:8080/api-docs).
+The swagger UI for the api can be found localhost:8080/api-docs.
 
 Assupmtions
 -------------
